@@ -7,9 +7,18 @@ def check_price(symbol):
     params = {"category": "linear", "symbol": symbol}
 
     r = requests.get(url, params=params, timeout=15)
-    data = r.json()
 
-    # Eğer API hata döndürürse
+    # Önce HTTP status kontrol
+    if r.status_code != 200:
+        raise RuntimeError(f"HTTP hata: {r.status_code} - {r.text}")
+
+    # JSON parse etmeyi dene
+    try:
+        data = r.json()
+    except Exception:
+        raise RuntimeError(f"JSON parse hatası. Gelen cevap: {r.text}")
+
+    # API hata kontrol
     if data.get("retCode") != 0:
         raise RuntimeError(f"Bybit API hata: {data}")
 
