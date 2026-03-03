@@ -1,28 +1,12 @@
 import requests
-import time
 
-SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]  # <-- burası önemli
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
 
-def check_price(symbol):
-    url = "https://api.binance.com/api/v3/ticker/price"
-    r = requests.get(url, params={"symbol": symbol}, timeout=10)
+def check_price(symbol: str) -> float:
+    url = "https://api.bybit.com/v5/market/tickers"
+    params = {"category": "linear", "symbol": symbol}
+    r = requests.get(url, params=params, timeout=15)
+    r.raise_for_status()
     data = r.json()
 
-    # Hata döndüyse (invalid symbol vs.)
-    if "price" not in data:
-        raise RuntimeError(f"{symbol} için Binance cevap hatası: {data}")
-
-    return float(data["price"])
-
-
-def main():
-    print("---- Tarama Başladı ----")
-    for symbol in SYMBOLS:
-        price = check_price(symbol)
-        print(f"{symbol} fiyat: {price}")
-    print("------------------------")
-
-
-if __name__ == "__main__":
-    # GitHub Actions'ta sonsuz döngü istemiyoruz. 1 kere çalışsın.
-    main()
+    if data.get("retCode") !=
